@@ -11,6 +11,7 @@
 
 ⚡️ Adapted to Java applications with javaagent\
 ⚡️ An agent for sending transaction data to server\
+⚡️ Check the health of java applications\
 ⚡️ Made with Java, Javaagent\
 ⚡️ Collect transaction data and java heap/storage data, especially ECM info\
 ⚡️ Use aspectj\
