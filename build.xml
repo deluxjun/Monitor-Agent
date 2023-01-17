@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!-- default : original, obfuscate, [make_internal | make_develop_jar | make_prod 
+	| make_trial | make_lib] -->
+<project name="xMonAspect" basedir="." default="make_jar">
+	<tstamp />
+
+	<!-- Specifity product's class dir --> 
+	<property file="build.properties"/>
+
+	<property name="product.build.dir" value="classes" />
+
+	<property name="package.dir" value="package" />
+
+	<property name="company" value="SpenoCom Inc." />
+	<property name="name" value="xmonitor_aspect" />
+	<property name="jdk" value="1.5" />
+	<property name="version" value="1.0.0 (${DSTAMP})" />
+
+	<property name="src.dir" value="src" />
+
+	<property name="build.dir" value="classes" />
+	<property name="lib.dir" value="lib" />
+	
+	<property name="aspectjtools.jar" location="${lib.dir}/aspectj/aspectjtools.jar"/>
+	<property name="aop.xml.dir" location="projects/${subproject.name}"/>
+
+
+	<path id="classpath1">
+		<fileset dir="lib">
+			<include name="aspectj/*.jar" />
+			<include name="xmon/*.jar" />
+			<include name="${subproject.name}/*.jar" />
+		</fileset>
+		<pathelement path="${build.dir}" />
+		<pathelement path="${product.build.dir}" />
+	</path>
+	
+	<target name="init.taskdefs" depends="" unless="taskdefs.init">
+		<!--  sets name of new task to iajc, old task to ajc  -->
+		<taskdef resource="org/aspectj/tools/ant/taskdefs/aspectjTaskdefs.properties">
+			<classpath>
+				<pathelement path="${aspectjtools.jar}"/>
+			</classpath>
+		</taskdef>
+		<property name="taskdefs.init" value="true"/>
+	</target>
+
+	<target name="clean_classes" depends="" description="clean classes">
+		<delete includeEmptyDirs="true" failonerror="false">
+			<fileset dir="${build.dir}" includes="**/*" />
+		</delete>
+	</target>
+
+	<target name="build" depends="clean_classes,init.taskdefs"
+		description="Compile main source tree java files">
+		<mkdir dir="${build.dir}" />
+		<javac classpathref="classpath1" encoding="euc-kr" destdir="${build.dir}" debug="true"
+			deprecation="false" optimize="false" failonerror="true" srcdir="${src.dir}">
+			<include name="${subproject.name}/**/*.java"/>
+		</javac>
+		
+		<iajc source="${jdk}" destdir="${build.dir}" classpathref="classpath1" fork="true" forkclasspath="${aspectjtools.jar}" verbose="off">
+			<src path="${src.dir}"/>
+			<include name="${subproject.name}/**/*.aj"/>
+		</iajc>
+
+	</target>
+
+	<target name="clean_package" depends="" description="clean package">
+		<delete includeEmptyDirs="true" failonerror="false">
+			<fileset dir="${package.dir}" includes="**/*.class" />
+		</delete>
+	</target>
+
+	<target name="copyToPackage" depends="clean_package" description="copy class files">
+		<!-- <antcall target="clean_package"/> -->
+		<copy todir="${package.dir}">
+			<fileset file="${build.dir}/*.*" />
+		</copy>
+		<copy todir="${package.dir}/aj">
+			<fileset dir="${build.dir}/aj" />
+		</copy>
+		<copy todir="${package.dir}/org">
+			<fileset dir="${build.dir}/org" />
+		</copy>
+		<copy todir="${package.dir}/${subproject.name}">
+			<fileset dir="${build.dir}/${subproject.name}" />
+		</copy>
+	</target>
+	
+	<target name="unjar_aspectj" depends="">
+	    <unzip dest="${build.dir}">
+	        <fileset dir="${lib.dir}">
+	            <include name="aspectj/aspectjweaver.jar" />
+	        </fileset>    
+	    </unzip>
+	</target>
+	
+	<path id="jar_base">
+		<fileset dir="${package.dir}">
+			<include name="aj/**/*.class" />
+			<include name="org/**/*.*" />
+			<include name="*.*" />
+			<include name="${subproject.name}/**/*.class" />
+		</fileset>
+	</path>
+
+	<target name="make_jar" depends="build,unjar_aspectj,copyToPackage" description="Make jar file">
+		<delete includeEmptyDirs="true" failonerror="false">
+			<fileset dir="${package.dir}/jar" includes="${name}_${DSTAMP}.jar" />
+		</delete>
+
+		<jar destfile="${package.dir}/jar/${name}_${DSTAMP}.jar" update="true">
+			<metainf dir="${aop.xml.dir}" includes="aop.xml"/>
+			<manifest>
+				<attribute name="Vendor" value="${company}" />
+				<attribute name="Title" value="${name}_${subproject.name} Original" />
+				<attribute name="Version" value="${version}" />
+				<attribute name="Premain-Class" value="org.aspectj.weaver.loadtime.Agent" />
+				<attribute name="Can-Redefine-Classes" value="true" />
+			</manifest>
+			<path refid="jar_base" />
+		</jar>
+
+		<copy overwrite="true" file="${package.dir}/jar/${name}_${DSTAMP}.jar" tofile="${package.dir}/jar/${name}_${subproject.name}.jar" />
+		<copy overwrite="true" file="${package.dir}/jar/${name}_${subproject.name}.jar" tofile="projects/${subproject.name}/${name}_${subproject.name}.jar" />
+
+	</target>
+
+</project>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="EUC-KR"?>
+<XmAgent>	
+	<Agent MyName="TestAgent10">
+		<LogId text="Log1"/>
+		<LogFilter text="now"/>
+		<LogFilter text="LV:5"/>
+	</Agent>
+	<AmassServer
+		AmassServerIP="10.1.61.45"
+		AmassTransPort="18881"
+		AmassCommdPort="18880"
+		
+		SessionCheckRepeatMs="5000"
+		
+		MaxJsonDataLength="4096"
+		MaxJsonDataCount="500"
+	   
+		TransactionRepeatMs="100"
+		TransactionRetryConnectionMs="3000"
+		
+		PUTLogUseYN="Y"
+		PUTEventUseYN="Y"
+	/>
+	
+
+	<!-- 
+	
+	<Command type="Reso" name="Reso_Storage"
+		ClassPath="com.speno.xmon.agent.AmassStorage"
+		ValueUnit="GB"
+		Title="b"
+		Description="a"
+		AggreUseYN="N"
+		HealthUseYN="N">
+		<Resources name="C" properties="USE,TOTAL,MAX"/>
+		<Resources name="D" properties="USE,TOTAL"/>
+	</Command>
+	
+	<Command type="Reso" name="Reso_CpuUsage"
+		ClassPath="com.speno.xmon.agent.AmassCpu"
+		ValueUnit="%"
+		Title="b"
+		Description="a"
+		AggreUseYN="Y"
+		HealthUseYN="Y">
+		<Resources name="CpuUsage" properties="USE"/>
+	</Command> -->
+
+</XmAgent>
+

@@ -1,0 +1,16 @@
+<aspectj>
+ <aspects>
+  <aspect name="xvarmext.monitor.AspectMonitor" />
+  <!-- <aspect name="aspect" /> -->
+ </aspects>
+   
+ <!--  <weaver options="-verbose -debug -showWeaveInfo"> -->
+<!--
+ <weaver>
+  <include within="com.windfire.agents.data..*" />
+  <include within="com.windfire.agents.archive.*" />
+  <include within="com.windfire.agents.comm.*" />
+ </weaver>
+--> 
+
+</aspectj>
